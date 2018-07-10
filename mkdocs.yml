@@ -1,0 +1,6 @@
+site_name: rest-framework chinese
+docs:
+  /quick_start.md
+
+page:
+  - About: about.md
