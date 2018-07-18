@@ -1,116 +1,108 @@
-# rest-framework
-***
-这是第三版的rest-framework
-***
+# 快速开始
+我们将在系统中创建一个api， 用于允许管理员进行查看和编辑用户和用户组信息
 
-Django REST framework 在构建web api上是一个强大且灵活的工具包
+## 项目步骤
 
-下面的优点，可能使你选择rest framework
+创建一个名字为`tutorial`项目，在生成一个名字为`quickstart`应用
 
-* 可浏览性的web api
-* 验证策略包括oauth1a和oauth2
-* 序列化支持orm和非orm
-* 可以任意定制方法 如果你不需要更多的功能，你可以使用基础的视图
+    # 创建项目文件夹
+    mkdir tutorial
+    cd tutorial
 
-***
+    # 创建一个虚拟环境
+    virtualenv env
+    source env/bin/activate  # window使用 `env\Scripts\activate`
 
-## 要求
+    # 现在安装django和djangorestframework
+    pip install django
+    pip install djangorestframework
 
-环境要求：
+    # 创建项目，然后在创建quickstart应用
+    django-admin.py startproject tutorial .  #注意 '.'
+    cd tutorial
+    django-admin.py startapp quickstart
+    cd ..
 
-* Python(2.7. 3.2, 3.3, 3.4, 3.5, 3.6)
-* Python(1.10, 1.11, 2.0)
+这个文件结构应该是这样的
 
-以下包可选：
+    $ pwd
+    <some path>/tutorial
+    $ find .
+    .
+    ./manage.py
+    ./tutorial
+    ./tutorial/__init__.py
+    ./tutorial/quickstart
+    ./tutorial/quickstart/__init__.py
+    ./tutorial/quickstart/admin.py
+    ./tutorial/quickstart/apps.py
+    ./tutorial/quickstart/migrations
+    ./tutorial/quickstart/migrations/__init__.py
+    ./tutorial/quickstart/models.py
+    ./tutorial/quickstart/tests.py
+    ./tutorial/quickstart/views.py
+    ./tutorial/settings.py
+    ./tutorial/urls.py
+    ./tutorial/wsgi.py
 
-* coreapi(1.32.0+) - 模式生成支持
-* Markdown（2.1.0+） - markdown支持可浏览的api
-* django-filter(1.0.1+)  - 搜索
-* django-crispy-forms  - 改进搜索展示
-* django-guardian - 对象等级支持
+在项目目录中创建应用程序可能看起来很不寻常，但是使用项目的命名空间能避免与外部拓展的包产生冲突。
+第一需要同步生成你的数据库。
 
-***
+    python manage.py migrate
 
-## 安装
+我们将创建一个名为`admin`、密码为`password123`的初始用户， 这个用户将作为我们的认证用户。
 
-使用pip安装
+    python manage.py createsuperuser --email admin@example.com --username admin
 
-> pip install djangorestframework
+一旦你已经创建了数据库和初始用户，那就打开项目的文件夹，准备我们接下来编程吧
 
-或者从git下载, 进行安装
+## serializer（序列化）
 
-> git clone git@github.com:encode/django-rest-framework.git
+首相我们打算定义几个serializer， 先创建一个`tutorial/quickstart/serializers.py`文件用于我们的数据表示
 
-将rest_framework加入django的settings中 `INSTALLED_APPS`
+    from django.contrib.auth.models import User, Group
+    from rest_framework import serializers
 
-    INSTALLED_APPS = (
-        ...
-        'rest_framework',
 
-    )
-如果你想要使用可视化的api， 你大概要加入rest-framework的登录和登出视图， 把下面的代码加入的你的根部`urls.py`文件中
-
-    urlpatterns = [
-        ...
-        url(r'^api-auth/', include('rest_framework.urls'))
-    ]
-
-注意url的路径可以任意设置
-
-***
-
-## 样例
-
-让我们来一个使用rest-framework快速构建简单的model-back API
-
-我们将在项目中创建一个可读写用户信息的api
-
-rest-framework配置是在`settings.py`中， 一个名为`REST_FRAMEWORK`的字典， 我们首先加这个配置加入`settings.py`中
-
-    REST_FRAMEWORK = {
-        # Use Django's standard `django.contrib.auth` permissions,
-        # or allow read-only access for unauthenticated users.
-        'DEFAULT_PERMISSION_CLASSES': [
-            'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-        ]
-    }
-
-同时也不要忘记将`rest-framework`加入`INSTALLED_APPS`变量中
-
-现在开始创建我们的api， 下面就是我们项目中url.py的内容
-
-    from django.conf.urls import url, include
-    from django.contrib.auth.models import User
-    from rest_framework import routers, serializers, viewsets
-
-    # Serializers define the API representation.
     class UserSerializer(serializers.HyperlinkedModelSerializer):
         class Meta:
             model = User
-            fields = ('url', 'username', 'email', 'is_staff')
+            fields = ('url', 'username', 'email', 'groups')
 
-    # ViewSets define the view behavior.
+
+    class GroupSerializer(serializers.HyperlinkedModelSerializer):
+        class Meta:
+            model = Group
+            fields = ('url', 'name')
+
+注意在这种情况下，我们使用超链接， 对于`HyperlinkedModelSerializer`，你能使用主键和其他种类的关系， 超链接是一个好的RESTful设计
+
+
+## 视图
+
+现在我将写一些视图，打开`tutorial/quickstart/views.py`
+
+    from django.contrib.auth.models import User, Group
+    from rest_framework import viewsets
+    from tutorial.quickstart.serializers import UserSerializer, GroupSerializer
+
+
     class UserViewSet(viewsets.ModelViewSet):
-        queryset = User.objects.all()
+        """
+        API endpoint that allows users to be viewed or edited.
+        """
+        queryset = User.objects.all().order_by('-date_joined')
         serializer_class = UserSerializer
 
-    # Routers provide an easy way of automatically determining the URL conf.
-    router = routers.DefaultRouter()
-    router.register(r'users', UserViewSet)
 
-    # Wire up our API using automatic URL routing.
-    # Additionally, we include login URLs for the browsable API.
-    urlpatterns = [
-        url(r'^', include(router.urls)),
-        url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
-    ]
+    class GroupViewSet(viewsets.ModelViewSet):
+        """
+        API endpoint that allows groups to be viewed or edited.
+        """
+        queryset = Group.objects.all()
+        serializer_class = GroupSerializer
 
-现在你可以在浏览器中输入 `http://127.0.0.1:8000`来查看新的'users' api，如果你使用顶部的登录控件登录成功， 你将能增加、删除用户，
-可能需要你使用`django`中的`migrate`命令在数据库中生成相应的数据表
 
-## 快速开始
-
-是不是有点迫不及待了？快速开始能使你快速地使用rest-framework建立、运行、构建api
-
-* [快速开始]('./')
+我们不是将多个视图分组在一起，而是将所有的共同行为分组到称为ViewSets的类中。
+如果需要的话，我们可以很容易地把这些分解成单独的视图，但是使用视图集可以使视图逻辑组织得很好，并且非常简洁。
 
