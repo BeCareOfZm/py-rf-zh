@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="08fd05d2-deb3-431d-a616-9e10939abfc8" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/docs/about.md" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/docs/quickstart/quick_start2.md" afterPath="$PROJECT_DIR$/docs/quickstart/快速开始.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/docs/quickstart/快速开始.md" afterPath="$PROJECT_DIR$/docs/quickstart/快速开始.md" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -19,8 +16,8 @@
       <file leaf-file-name="快速开始.md" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/docs/quickstart/快速开始.md">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="486">
-              <caret line="130" column="19" lean-forward="false" selection-start-line="130" selection-start-column="0" selection-end-line="130" selection-end-column="72" />
+            <state relative-caret-position="501">
+              <caret line="131" column="0" lean-forward="true" selection-start-line="131" selection-start-column="0" selection-end-line="131" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -213,8 +210,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/docs/quickstart/快速开始.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="486">
-          <caret line="130" column="19" lean-forward="false" selection-start-line="130" selection-start-column="0" selection-end-line="130" selection-end-column="72" />
+        <state relative-caret-position="501">
+          <caret line="131" column="0" lean-forward="true" selection-start-line="131" selection-start-column="0" selection-end-line="131" selection-end-column="0" />
           <folding />
         </state>
       </provider>
